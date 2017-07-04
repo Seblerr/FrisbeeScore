@@ -12,8 +12,8 @@ export default class GameSetup extends React.Component {
     this.state = {
       name: '',
       score: 0,
-      rounds: '',
-      players: [],
+      rounds: 18,
+      players: [{name: 'Sebbe', score: 60}, {name: 'Ante', score: 70}, {name: 'Jacob', score: 71}, {name: 'Andreén', score: 96}],
       dataSource: ds.cloneWithRows([])
     }
   }
@@ -35,17 +35,19 @@ export default class GameSetup extends React.Component {
         <Button
           title='Add Player'
           onPress={() => this.addPlayer(this.state.name)} />
-        <View style={{height: 100}}>
+        {/* <View style={{height: 100}}>
           <ListView
             enableEmptySections
             dataSource={this.state.dataSource}
             renderRow={(rowData) => <Text>{rowData.name}</Text>}
             />
-        </View>
-        <TextInput ref='username'
+        </View> */}
+        {this.state.players.map((player) => <Text>{player.name}</Text>)}
+        <TextInput
           style={{height: 50, width: 150}}
           keyboardType='numeric'
           placeholder='Enter rounds'
+          // value='18'
           onChangeText={(rounds) => this.setState({rounds}, () => { console.log(this.state.rounds) })}
             // onSubmitEditing={console.log(this.state.rounds)}
             // onFocus={this.inputFocused.bind(this, 'username')}
@@ -68,9 +70,9 @@ export default class GameSetup extends React.Component {
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(this.state.players)
     })
+    console.log(this.state.players)
     this.clearText()
     // this.state.dataSource = this.state.dataSource.cloneWithRows(this.state.players)
-    console.log(this.state.players)
   }
   //
   clearText () {
@@ -78,13 +80,6 @@ export default class GameSetup extends React.Component {
   }
 
 }
-
-// const App = StackNavigator({
-//   Home: { screen: HomeScene },
-//   Game: { screen: GameScene }
-// })
-
-// AppRegistry.registerComponent('HomeScene', () => App)
 
 const styles = StyleSheet.create({
   container: {
