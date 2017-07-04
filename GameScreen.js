@@ -7,14 +7,16 @@ export default class GameScreen extends Component {
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
     this.state = {
       currentRound: 1,
+      totalRounds: this.props.navigation.state.params.rounds,
       score: 0,
-      players: this.props.navigation.state.players,
+      players: this.props.navigation.state.params.players,
       dataSource: ds.cloneWithRows([])
     }
   }
 
   render () {
-    const { params } = this.props.navigation.state
+    console.log(this.props.navigation.state)
+    // const { params } = this.props.navigation.state
     return (
       // <View style={styles.container}>
       <View style={styles.container}>
@@ -22,9 +24,9 @@ export default class GameScreen extends Component {
           <View>
             <Text style={{fontSize: 40}}>Current Round: {this.state.currentRound}</Text>
           </View>
-          {params.players.map((player) =>
+          {this.state.players.map((player) =>
             <TextInput
-              ref={component => this._textInput = component}
+              ref={player.name}
               style={{height: 50, width: 100}}
               keyboardType='numeric'
               placeholder={player.name}
@@ -33,14 +35,15 @@ export default class GameScreen extends Component {
               onChangeText={(text) => this.setPlayerScore(player.name, text)}
             />)}
 
-          <Text>Number of rounds: {params.rounds}</Text>
-          {params.players.map((player) => <Text>{player.name} {player.score}</Text>)}
+          <Text>Number of rounds: {this.state.totalRounds}</Text>
+          {this.state.players.map((player) => <Text>{player.name} {player.score}</Text>)}
           <Button
             title='Next Round'
             onPress={() =>
                 this.nextRound()
               }
           />
+          {this.displayWinner()}
         </ScrollView>
       </View>
       // </View>
@@ -49,15 +52,18 @@ export default class GameScreen extends Component {
 
   nextRound () {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.props.navigation.state.params.players)
+      dataSource: this.state.dataSource.cloneWithRows(this.state.players)
     })
-
-    this.clearText()
-    this.setState({ currentRound: parseInt(this.state.currentRound) + 1 })
+    this.state.players.forEach((player) => {
+      this.clearText(player.name)
+    })
+    if (this.state.currentRound < this.state.totalRounds) {
+      this.setState({ currentRound: parseInt(this.state.currentRound) + 1 })
+    }
   }
 
   setPlayerScore (player, score) {
-    var players = this.props.navigation.state.params.players
+    var players = this.state.players
     // console.log(players)
     for (let i in players) {
       if (players[i].name === player) {
@@ -70,8 +76,29 @@ export default class GameScreen extends Component {
     console.log(players)
   }
 
-  clearText () {
-    this._textInput.setNativeProps({text: ''})
+  displayWinner () {
+    var scores = []
+    var winner
+    if (this.state.currentRound === this.state.totalRounds) {
+      this.state.players.forEach((player) => {
+        scores.push(player.score)
+      })
+      var min = Math.min.apply(null, scores)
+      this.state.players.forEach((player) => {
+        if (player.score === min) {
+          winner = player.name
+        }
+      })
+      return (
+        <View>
+          <Text style={{fontSize: 45, bold: true}}>Winner is {winner}</Text>
+        </View>
+      )
+    }
+  }
+
+  clearText (fieldName) {
+    this.refs[fieldName].setNativeProps({text: ''})
   }
 }
 

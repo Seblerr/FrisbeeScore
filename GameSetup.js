@@ -13,7 +13,7 @@ export default class GameSetup extends React.Component {
       name: '',
       score: 0,
       rounds: 18,
-      players: [{name: 'Sebbe', score: 60}, {name: 'Ante', score: 70}, {name: 'Jacob', score: 71}, {name: 'Andreén', score: 96}],
+      players: [{name: 'Jacob', score: 0}, {name: 'Ante', score: 0}, {name: 'Sebbe', score: 0}],
       dataSource: ds.cloneWithRows([])
     }
   }
@@ -63,12 +63,15 @@ export default class GameSetup extends React.Component {
   }
 
   addPlayer (name) {
-    this.state.players.push({
-      name: this.state.name,
-      score: this.state.score
-    })
+    if (name.length > 0) {
+      this.state.players.push({
+        name: this.state.name,
+        score: this.state.score
+      })
+    }
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.players)
+      dataSource: this.state.dataSource.cloneWithRows(this.state.players),
+      name: ''
     })
     console.log(this.state.players)
     this.clearText()
