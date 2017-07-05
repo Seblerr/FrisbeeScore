@@ -4,47 +4,52 @@ import { ScrollView, ListView, TextInput, Button, StyleSheet, Text, View } from 
 export default class GameScreen extends Component {
   constructor (props) {
     super(props)
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
     this.state = {
-      currentRound: 1,
+      currentRound: 0,
       totalRounds: this.props.navigation.state.params.rounds,
       score: 0,
-      players: this.props.navigation.state.params.players,
-      dataSource: ds.cloneWithRows([])
+      players: this.props.navigation.state.params.players
     }
   }
 
   render () {
-    console.log(this.props.navigation.state)
-    // const { params } = this.props.navigation.state
     return (
       // <View style={styles.container}>
       <View style={styles.container}>
-        <ScrollView>
-          <View>
-            <Text style={{fontSize: 40}}>Current Round: {this.state.currentRound}</Text>
-          </View>
+        {/* <ScrollView contentContainerStyle={styles.container}> */}
+        <View style={styles.header}>
+          {this.displayWinner()}
+          {/* <Text style={{fontSize: 20}}>Current Round: {this.state.currentRound} of {this.state.totalRounds}</Text> */}
+        </View>
+        <View style={{flex: 3}}>
           {this.state.players.map((player) =>
             <TextInput
+              key={player.name}
               ref={player.name}
-              style={{height: 50, width: 100}}
+              style={{height: 35, width: 80}}
               keyboardType='numeric'
               placeholder={player.name}
+              placeholderTextColor='darkgray'
+              textAlign='center'
               // onChangeText={(text) => setPro}
               // value={parseInt('0')}
               onChangeText={(text) => this.setPlayerScore(player.name, text)}
             />)}
-
-          <Text>Number of rounds: {this.state.totalRounds}</Text>
-          {this.state.players.map((player) => <Text>{player.name} {player.score}</Text>)}
-          <Button
-            title='Next Round'
-            onPress={() =>
-                this.nextRound()
-              }
-          />
-          {this.displayWinner()}
-        </ScrollView>
+        </View>
+        <View style={styles.scoreboard}>
+          <View style={{alignItems: 'flex-start'}}>
+            {this.state.players.map((player) =>
+              <Text style={{fontSize: 15, fontWeight: 'bold'}} key={player.name}>{player.name}</Text>)}
+          </View>
+          <View style={{width: 50, alignItems: 'flex-end'}}>
+            {this.state.players.map((player) =>
+              <Text style={{fontSize: 15, fontWeight: 'bold'}} key={player.name}>{player.score}</Text>)}
+          </View>
+        </View>
+        <View style={{flex: 1}}>
+          {this.displayButton()}
+        </View>
+        {/* </ScrollView> */}
       </View>
       // </View>
     )
@@ -52,7 +57,7 @@ export default class GameScreen extends Component {
 
   nextRound () {
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.players)
+      players: this.state.players
     })
     this.state.players.forEach((player) => {
       this.clearText(player.name)
@@ -79,7 +84,9 @@ export default class GameScreen extends Component {
   displayWinner () {
     var scores = []
     var winner
-    if (this.state.currentRound === this.state.totalRounds) {
+    if (this.state.currentRound < this.state.totalRounds) {
+      return <Text style={styles.titleText}>Current Round: {this.state.currentRound + 1} of {this.state.totalRounds}</Text>
+    } else {
       this.state.players.forEach((player) => {
         scores.push(player.score)
       })
@@ -90,9 +97,27 @@ export default class GameScreen extends Component {
         }
       })
       return (
-        <View>
-          <Text style={{fontSize: 45, bold: true}}>Winner is {winner}</Text>
-        </View>
+        <Text style={styles.titleText}>Winner is {winner}</Text>
+      )
+    }
+  }
+
+  displayButton () {
+    if (this.state.currentRound + 1 < this.state.totalRounds) {
+      return (
+        <Button
+          title='Next Round'
+          onPress={() =>
+              this.nextRound()
+            } />
+      )
+    } else {
+      return (
+        <Button
+          title='End Game'
+          onPress={() =>
+              this.nextRound()
+            } />
       )
     }
   }
@@ -106,15 +131,27 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 100,
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
+    backgroundColor: 'gainsboro',
+    alignItems: 'center'
+    // justifyContent: 'center'
   },
-  red: {
-    color: 'red'
+  scoreboard: {
+    flex: 2,
+    flexDirection: 'row'
+    // justifyContent: 'flex-start',
+    // alignItems: 'flex-start',
+    // backgroundColor: 'brown'
+    // alignContent: 'space-between'
+  },
+  header: {
+    flex: 1
+    // backgroundColor: 'blue'
+    // flexDirection: 'row'
+    // alignItems: 'flex-start',
+    // justifyContent: 'flex-start'
   },
   titleText: {
-    fontSize: 20,
+    fontSize: 35,
     fontWeight: 'bold'
   }
 })
