@@ -9,20 +9,20 @@ export default class GameScreen extends Component {
       totalRounds: this.props.navigation.state.params.rounds,
       score: 0,
       players: this.props.navigation.state.params.players
+      // playerScores: this.props.navigation.state.params.newState
     }
   }
 
   render () {
     return (
-      // <View style={styles.container}>
       <View style={styles.container}>
-        {/* <ScrollView contentContainerStyle={styles.container}> */}
         <View style={styles.header}>
           {this.displayWinner()}
           {/* <Text style={{fontSize: 20}}>Current Round: {this.state.currentRound} of {this.state.totalRounds}</Text> */}
         </View>
         <View style={{flex: 3}}>
           {this.state.players.map((player) =>
+            // let playerName = player.name
             <TextInput
               key={player.name}
               ref={player.name}
@@ -31,9 +31,16 @@ export default class GameScreen extends Component {
               placeholder={player.name}
               placeholderTextColor='darkgray'
               textAlign='center'
-              // onChangeText={(text) => setPro}
+              // onChangeText={(text) => this.setState({
+              //   playerScores: this.state.players.map(obj =>
+              //     obj.name === player.name
+              //     ? { score: text }
+              //     : obj
+              //   )
+              // })}
               // value={parseInt('0')}
               onChangeText={(text) => this.setPlayerScore(player.name, text)}
+              onSubmitEditing={(text) => console.log(text)}
             />)}
         </View>
         <Text style={{fontSize: 25, fontWeight: 'bold'}}>Scoreboard</Text>
@@ -50,13 +57,12 @@ export default class GameScreen extends Component {
         <View style={{flex: 1}}>
           {this.displayButton()}
         </View>
-        {/* </ScrollView> */}
       </View>
-      // </View>
     )
   }
 
   nextRound () {
+    console.log('test')
     this.setState({
       players: this.state.players
     })
@@ -66,15 +72,20 @@ export default class GameScreen extends Component {
     if (this.state.currentRound < this.state.totalRounds) {
       this.setState({ currentRound: parseInt(this.state.currentRound) + 1 })
     }
+    // console.log(this.state.playerScores)
+    // console.log(this.state.playerScore)
   }
 
   setPlayerScore (player, score) {
+    var realScore = score.charAt(score.length - 1)
+    // console.log(score)
+    // console.log(realScore)
     var players = this.state.players
     // console.log(players)
     for (let i in players) {
       if (players[i].name === player) {
-        if (score > 0) {
-          players[i].score = parseInt(score) + parseInt(players[i].score)
+        if (realScore > 0) {
+          players[i].score = parseInt(realScore) + parseInt(players[i].score)
           break
         }
       }
@@ -128,6 +139,7 @@ export default class GameScreen extends Component {
     this.props.navigation.goBack()
   }
   clearText (fieldName) {
+    // console.log(this.refs[fieldName])
     this.refs[fieldName].setNativeProps({text: ''})
   }
 }

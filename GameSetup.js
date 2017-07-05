@@ -8,7 +8,9 @@ export default class GameSetup extends React.Component {
       name: '',
       score: 0,
       rounds: 3,
-      players: []
+      players: [],
+      // newState: {},
+      test: ''
       // players: [{name: 'Jacob', score: 0}, {name: 'Ante', score: 0}, {name: 'Sebbe', score: 0}]
     }
   }
@@ -49,7 +51,7 @@ export default class GameSetup extends React.Component {
           <Button
             title='Start Game'
             onPress={() =>
-              navigate('GameScreen', { players: this.state.players, rounds: this.state.rounds, reset: this.resetGame.bind(this) })
+              this.startGame()
             }
         />
         </View>
@@ -69,8 +71,24 @@ export default class GameSetup extends React.Component {
       // dataSource: this.state.dataSource.cloneWithRows(this.state.players),
       name: ''
     })
-    console.log(this.state.players)
+    // console.log(this.state.players)
     this.clearText()
+  }
+
+  startGame () {
+    var players = this.state.players
+    var newState = {}
+
+    players.forEach((player) => {
+      newState[player.name] = ''
+    })
+
+    // console.log(newState)
+    // this.setState({test: })
+    // this.setState(newState)
+    // console.log(this.state)
+    // console.log(this.state.newState)
+    this.props.navigation.navigate('GameScreen', { players: this.state.players, newState: newState, rounds: this.state.rounds, reset: this.resetGame.bind(this) })
   }
 
   resetGame () {
