@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, ListView, TextInput, Button, StyleSheet, Text, View } from 'react-native'
+import { TextInput, Button, StyleSheet, Text, View } from 'react-native'
 
 export default class GameScreen extends Component {
   constructor (props) {
@@ -36,8 +36,9 @@ export default class GameScreen extends Component {
               onChangeText={(text) => this.setPlayerScore(player.name, text)}
             />)}
         </View>
+        <Text style={{fontSize: 25, fontWeight: 'bold'}}>Scoreboard</Text>
         <View style={styles.scoreboard}>
-          <View style={{alignItems: 'flex-start'}}>
+          <View>
             {this.state.players.map((player) =>
               <Text style={{fontSize: 15, fontWeight: 'bold'}} key={player.name}>{player.name}</Text>)}
           </View>
@@ -103,7 +104,7 @@ export default class GameScreen extends Component {
   }
 
   displayButton () {
-    if (this.state.currentRound + 1 < this.state.totalRounds) {
+    if (this.state.currentRound < this.state.totalRounds) {
       return (
         <Button
           title='Next Round'
@@ -114,14 +115,18 @@ export default class GameScreen extends Component {
     } else {
       return (
         <Button
-          title='End Game'
+          title='Start New Game'
           onPress={() =>
-              this.nextRound()
+                this.newGame()
             } />
       )
     }
   }
 
+  newGame () {
+    this.props.navigation.state.params.reset()
+    this.props.navigation.goBack()
+  }
   clearText (fieldName) {
     this.refs[fieldName].setNativeProps({text: ''})
   }
@@ -137,7 +142,8 @@ const styles = StyleSheet.create({
   },
   scoreboard: {
     flex: 2,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingTop: 10
     // justifyContent: 'flex-start',
     // alignItems: 'flex-start',
     // backgroundColor: 'brown'

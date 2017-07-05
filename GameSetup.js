@@ -8,7 +8,8 @@ export default class GameSetup extends React.Component {
       name: '',
       score: 0,
       rounds: 3,
-      players: [{name: 'Jacob', score: 0}, {name: 'Ante', score: 0}, {name: 'Sebbe', score: 0}]
+      players: []
+      // players: [{name: 'Jacob', score: 0}, {name: 'Ante', score: 0}, {name: 'Sebbe', score: 0}]
     }
   }
 
@@ -48,7 +49,7 @@ export default class GameSetup extends React.Component {
           <Button
             title='Start Game'
             onPress={() =>
-              navigate('GameScreen', { players: this.state.players, rounds: this.state.rounds })
+              navigate('GameScreen', { players: this.state.players, rounds: this.state.rounds, reset: this.resetGame.bind(this) })
             }
         />
         </View>
@@ -70,6 +71,12 @@ export default class GameSetup extends React.Component {
     })
     console.log(this.state.players)
     this.clearText()
+  }
+
+  resetGame () {
+    this.setState({
+      players: []
+    })
   }
 
   clearText () {
