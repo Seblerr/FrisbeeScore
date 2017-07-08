@@ -8,8 +8,8 @@ export default class GameScreen extends Component {
       currentRound: 0,
       totalRounds: this.props.navigation.state.params.rounds,
       score: 0,
-      players: this.props.navigation.state.params.players
-      // playerScores: this.props.navigation.state.params.newState
+      players: this.props.navigation.state.params.players,
+      playerScores: {}
     }
   }
 
@@ -18,11 +18,9 @@ export default class GameScreen extends Component {
       <View style={styles.container}>
         <View style={styles.header}>
           {this.displayWinner()}
-          {/* <Text style={{fontSize: 20}}>Current Round: {this.state.currentRound} of {this.state.totalRounds}</Text> */}
         </View>
         <View style={{flex: 3}}>
           {this.state.players.map((player) =>
-            // let playerName = player.name
             <TextInput
               key={player.name}
               ref={player.name}
@@ -31,16 +29,7 @@ export default class GameScreen extends Component {
               placeholder={player.name}
               placeholderTextColor='darkgray'
               textAlign='center'
-              // onChangeText={(text) => this.setState({
-              //   playerScores: this.state.players.map(obj =>
-              //     obj.name === player.name
-              //     ? { score: text }
-              //     : obj
-              //   )
-              // })}
-              // value={parseInt('0')}
-              onChangeText={(text) => this.setPlayerScore(player.name, text)}
-              onSubmitEditing={(text) => console.log(text)}
+              onChangeText={(text) => this.getInputScore(player.name, text)}
             />)}
         </View>
         <Text style={{fontSize: 25, fontWeight: 'bold'}}>Scoreboard</Text>
@@ -61,8 +50,24 @@ export default class GameScreen extends Component {
     )
   }
 
+  getInputScore (player, score) {
+    let players = this.state.players
+    this.state.playerScores[player] = {player, score}
+
+    this.setState(this.state.playerScores)
+    console.log(this.state.playerScores)
+  }
+
   nextRound () {
-    console.log('test')
+    let players = this.state.players
+    for (let i in players) {
+      console.log(this.state.playerScores[players[i].name])
+      if (players[i].name === this.state.playerScores[players[i].name].player) {
+        players[i].score = parseInt(this.state.playerScores[players[i].name].score) + parseInt(players[i].score)
+      }
+    }
+    console.log(players)
+
     this.setState({
       players: this.state.players
     })
@@ -72,29 +77,7 @@ export default class GameScreen extends Component {
     if (this.state.currentRound < this.state.totalRounds) {
       this.setState({ currentRound: parseInt(this.state.currentRound) + 1 })
     }
-    // console.log(this.state.playerScores)
-    // console.log(this.state.playerScore)
-  }
 
-  setPlayerScore (player, score) {
-    let realScore = score.charAt(score.length - 1)
-    let newState = {}
-    newState[player.name] = score
-    this.setState(newState)
-    console.log(newState)
-    // console.log(score)
-    // console.log(realScore)
-    var players = this.state.players
-    // console.log(players)
-    for (let i in players) {
-      if (players[i].name === player) {
-        if (realScore > 0) {
-          players[i].score = parseInt(realScore) + parseInt(players[i].score)
-          break
-        }
-      }
-    }
-    console.log(players)
   }
 
   displayWinner () {
@@ -143,7 +126,7 @@ export default class GameScreen extends Component {
     this.props.navigation.goBack()
   }
   clearText (fieldName) {
-    // console.log(this.refs[fieldName])
+    console.log(this.refs[fieldName]).value
     this.refs[fieldName].setNativeProps({text: ''})
   }
 }
