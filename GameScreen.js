@@ -77,7 +77,11 @@ export default class GameScreen extends Component {
   }
 
   setPlayerScore (player, score) {
-    var realScore = score.charAt(score.length - 1)
+    let realScore = score.charAt(score.length - 1)
+    let newState = {}
+    newState[player.name] = score
+    this.setState(newState)
+    console.log(newState)
     // console.log(score)
     // console.log(realScore)
     var players = this.state.players
